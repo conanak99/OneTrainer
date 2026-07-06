@@ -4,6 +4,7 @@ script_imports()
 
 from modules.module.Blip2Model import Blip2Model
 from modules.module.BlipModel import BlipModel
+from modules.module.Qwen3VL4BModel import Qwen3VL4BModel
 from modules.module.WDModel import WDModel
 from modules.util.args.GenerateCaptionsArgs import GenerateCaptionsArgs
 from modules.util.enum.GenerateCaptionsModel import GenerateCaptionsModel
@@ -19,6 +20,8 @@ def main():
         model = BlipModel(torch.device(args.device), args.dtype.torch_dtype())
     elif args.model == GenerateCaptionsModel.BLIP2:
         model = Blip2Model(torch.device(args.device), args.dtype.torch_dtype())
+    elif args.model == GenerateCaptionsModel.QWEN3VL_4B:
+        model = Qwen3VL4BModel(torch.device(args.device), args.dtype.torch_dtype())
     elif args.model == GenerateCaptionsModel.WD14_VIT_2:
         model = WDModel(torch.device(args.device), args.dtype.torch_dtype())
 
