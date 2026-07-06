@@ -26,12 +26,7 @@ class Qwen3VL4BModel(BaseImageCaptionModel):
             caption_prefix: str = "",
             caption_postfix: str = "",
     ) -> str:
-        prompt = "Describe this image in one concise caption."
-        if initial_caption:
-            prompt = (
-                "Continue this image caption with concise visual details. "
-                f"Only provide the continuation, without repeating this prefix: {initial_caption}"
-            )
+        prompt = initial_caption
 
         messages = [
             {
@@ -53,7 +48,7 @@ class Qwen3VL4BModel(BaseImageCaptionModel):
         inputs = inputs.to(self.device)
 
         with torch.no_grad():
-            generated_ids = self.model.generate(**inputs, max_new_tokens=128)
+            generated_ids = self.model.generate(**inputs)
 
         generated_ids_trimmed = [
             out_ids[len(in_ids):]
