@@ -7,8 +7,8 @@ from transformers import AutoModelForImageTextToText, AutoProcessor
 
 class Qwen3VL4BModel(BaseImageCaptionModel):
     def __init__(self, device: torch.device, dtype: torch.dtype):
-        self.device = device
-        self.dtype = dtype
+        self.device = self.__supported_device(device)
+        self.dtype = self.__supported_dtype(self.device, dtype)
         self.model_id = "Qwen/Qwen3-VL-4B-Instruct"
 
         self.processor = AutoProcessor.from_pretrained(self.model_id)
@@ -18,6 +18,44 @@ class Qwen3VL4BModel(BaseImageCaptionModel):
         )
         self.model.eval()
         self.model.to(self.device)
+
+    @staticmethod
+    def __supported_device(device: torch.device) -> torch.device:
+        if device.type == "cuda":
+            if not torch.cuda.is_available():
+                print("CUDA is not available. Loading Qwen3-VL 4B on CPU instead.")
+                return torch.device("cpu")
+
+            if device.index is not None and device.index >= torch.cuda.device_count():
+                print(f"CUDA device {device} is not available. Loading Qwen3-VL 4B on CPU instead.")
+                return torch.device("cpu")
+
+        if device.type == "mps" and not torch.backends.mps.is_available():
+            print("MPS is not available. Loading Qwen3-VL 4B on CPU instead.")
+            return torch.device("cpu")
+
+        return device
+
+    @staticmethod
+    def __supported_dtype(device: torch.device, dtype: torch.dtype) -> torch.dtype:
+        if device.type == "cpu":
+            return torch.float32
+
+        if device.type == "cuda":
+            if dtype == torch.bfloat16 and not torch.cuda.is_bf16_supported():
+                return torch.float16
+            if dtype in (torch.float16, torch.bfloat16, torch.float32):
+                return dtype
+            return torch.float16
+
+        if device.type == "mps":
+            if dtype in (torch.float16, torch.float32):
+                return dtype
+            return torch.float16
+
+        if dtype in (torch.float16, torch.bfloat16, torch.float32):
+            return dtype
+        return torch.float32
 
     def generate_caption(
             self,
