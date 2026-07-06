@@ -26,7 +26,10 @@ class Qwen3VL4BModel(BaseImageCaptionModel):
             caption_prefix: str = "",
             caption_postfix: str = "",
     ) -> str:
-        prompt = initial_caption if initial_caption else "Describe this image only."
+        prompt = initial_caption if initial_caption else (
+            "Describe the image. Output only the description, with no introduction, "
+            "explanation, or conversational filler."
+        )
 
         messages = [
             {
