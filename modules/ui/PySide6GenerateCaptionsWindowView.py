@@ -21,7 +21,7 @@ class CtkGenerateCaptionsWindowView(BaseGenerateCaptionsWindowView, ctk.CTkTople
         self.mode_var = ctk.StringVar(self, "Create if absent")
         self.modes = ["Replace all captions", "Create if absent", "Add as new line"]
         self.model_var = ctk.StringVar(self, "Blip")
-        self.models = ["Blip", "Blip2", "WD14 VIT v2"]
+        self.models = ["Blip", "Blip2", "Qwen3-VL 4B", "WD14 VIT v2"]
 
         self.title("Batch generate captions")
         self.geometry("360x360")
