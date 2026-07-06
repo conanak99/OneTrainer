@@ -8,7 +8,7 @@ from transformers import AutoModelForImageTextToText, AutoProcessor
 class Qwen3VL4BModel(BaseImageCaptionModel):
     def __init__(self, device: torch.device, dtype: torch.dtype):
         self.device = device
-        self.dtype = self.__supported_dtype(device, dtype)
+        self.dtype = dtype
         self.model_id = "Qwen/Qwen3-VL-4B-Instruct"
 
         self.processor = AutoProcessor.from_pretrained(self.model_id)
@@ -18,22 +18,6 @@ class Qwen3VL4BModel(BaseImageCaptionModel):
         )
         self.model.eval()
         self.model.to(self.device)
-
-    @staticmethod
-    def __supported_dtype(device: torch.device, dtype: torch.dtype) -> torch.dtype:
-        if device.type == "cuda":
-            if dtype == torch.bfloat16 and not torch.cuda.is_bf16_supported():
-                return torch.float16
-            if dtype in (torch.float16, torch.bfloat16, torch.float32):
-                return dtype
-            return torch.float16
-
-        if device.type == "mps":
-            if dtype in (torch.float16, torch.float32):
-                return dtype
-            return torch.float16
-
-        return dtype
 
     def generate_caption(
             self,
