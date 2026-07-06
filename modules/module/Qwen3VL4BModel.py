@@ -60,8 +60,6 @@ class Qwen3VL4BModel(BaseImageCaptionModel):
             skip_special_tokens=True,
             clean_up_tokenization_spaces=False,
         )[0].strip()
-        predicted_caption = (
-            caption_prefix + initial_caption + predicted_caption + caption_postfix
-        ).strip()
+        predicted_caption = (caption_prefix + predicted_caption + caption_postfix).strip()
 
         return predicted_caption
